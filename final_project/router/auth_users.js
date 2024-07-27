@@ -37,18 +37,11 @@ regd_users.post("/login", (req, res) => {
     if (authenticatedUser(username, password)) {
         let accessToken = jwt.sign({
             data: password
-        }, 'access', { expiresIn: 60*60 });
-
+        }, 'access', { expiresIn: 60 * 60 });
         req.session.authorization = {
             accessToken, username
         }
-           
-        //return res.status(200).send(`Customer successfully logged in!`);
-        return res.status(200).json({
-            error: false,
-            accessToken,
-            message: "Customer successfully logged in!",
-        });
+        return res.status(200).send("User successfully logged in!");
     } else {
         return res.status(208).json({ message: "Invalid Login, please check username and password and try again." });
     }
@@ -58,7 +51,6 @@ regd_users.post("/login", (req, res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const username = req.session.authorization.username;
-    const accessToken = req.session.authorization.accessToken;
     const review = req.body.review;
 
     if (books[isbn]){
@@ -76,7 +68,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     
     if (books[isbn].reviews[username]){
         delete books[isbn].reviews[username];
-        res.send(`The review of the book with ISBN ${isbn} from user ${username} has been deleted.`);
+        res.send(`Reviews for the ISBN ${isbn} posted by the user ${username} deleted.`);
     } else {
         res.send(`No reviews with ISBN ${isbn} from user ${username} were found in the database.`);
     }
